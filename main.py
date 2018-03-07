@@ -9,16 +9,17 @@ REDIS_HOST = os.environ['REDIS_HOST']
 REDIS_DB = os.environ['REDIS_DB']
 ## Initialize redis
 r = redis.StrictRedis(host=REDIS_HOST, port=6379, db=REDIS_DB)
+expirationTime = 60*60*24*15
 '''
 Define function (import later)
 '''
-def translate(service,source_language,target_language,inputs):
+def translate(service,sourceLanguage,targetLanguage,inputs):
     for sentence in inputs:
-        key = 'translate_' + source_language + '_' + target_language + '_' + sentence
+        key = 'translate_' + sourceLanguage + '_' + targetLanguage + '_' + sentence
         if r.get(key) == None:
-            raw_output = service.translations().list(source=source_language, target=target_language, q=sentence).execute()
+            raw_output = service.translations().list(source=sourceLanguage, target=targetLanguage, q=sentence).execute()
             output = raw_output['translations'][0]['translatedText']
-            r.set(key, output, ex=60*60*24*15)
+            r.set(key, output, ex = expirationTime)
         else:
             output = r.get(key).decode('utf-8')
 
@@ -43,7 +44,7 @@ def textRecognition(service,service_type,image):
             }],
         })
         responses = request.execute(num_retries=3)
-        r.set(key, json.dumps(responses), ex=60*60*24*15)
+        r.set(key, json.dumps(responses), ex = expirationTime)
     else:
         responses = json.loads(r.get(key))
 
@@ -61,23 +62,23 @@ def languageProcessing(service,service_type,quotes):
                     'content': quote
                 }
             }).execute()
-            r.set(key, json.dumps(response), ex=60*60*24*15)
+            r.set(key, json.dumps(response), ex = expirationTime)
         else:
             response = json.loads(r.get(key))
 
         polarity = response['documentSentiment']['polarity']
         magnitude = response['documentSentiment']['magnitude']
         print('POLARITY=%s MAGNITUDE=%s for %s' % (polarity, magnitude, quote))
-        
+
 '''
 Google Cloud Translation API
 '''
 service = build('translate', 'v2', developerKey=APIKEY)
 inputs = ['is it really this easy?', 'amazing technology']
-source_language = 'en'
-target_language = 'de'
+sourceLanguage = 'en'
+targetLanguage = 'de'
 
-translate(service,source_language,target_language,inputs)
+translate(service,sourceLanguage,targetLanguage,inputs)
 '''
 Google Cloud Vision API
 '''
@@ -89,10 +90,10 @@ responses = textRecognition(service,service_type,image)
 ## Finally translate text found on image
 service = build('translate', 'v2', developerKey=APIKEY)
 inputs = [responses['responses'][0]['textAnnotations'][0]['description']]
-source_language = responses['responses'][0]['textAnnotations'][0]['locale']
-target_language = 'de'
+sourceLanguage = responses['responses'][0]['textAnnotations'][0]['locale']
+targetLanguage = 'de'
 
-translate(service,source_language,target_language,inputs)
+translate(service,sourceLanguage,targetLanguage,inputs)
 '''
 Cloud Natural Language API
 '''
