@@ -1,4 +1,5 @@
 from googleapiclient.discovery import build
+import base64
 import os
 import redis
 ## Set some global variables
@@ -8,56 +9,68 @@ REDIS_DB = os.environ['REDIS_DB']
 ## Initialize redis
 r = redis.StrictRedis(host=REDIS_HOST, port=6379, db=REDIS_DB)
 '''
-Google Cloud Translation API
+Define function (import later)
 '''
-service = build('translate', 'v2', developerKey=APIKEY)
-inputs = ['is it really this easy?', 'amazing technology']
-language = 'de'
+def translate(service,source_language,target_language,inputs):
+    for sentence in inputs:
+        key = 'language_' + source_language + '_' + target_language + '_' + sentence
+        if r.get(key) == None:
+            raw_output = service.translations().list(source=source_language, target=target_language, q=sentence).execute()
+            output = raw_output['translations'][0]['translatedText']
+            r.set(key, output, ex=60*60*24*15)
+        else:
+            output = r.get(key).decode('utf-8')
 
-for sentence in inputs:
-    key = 'language_' + language + '_' + sentence
+        print('translated by Google')
+        print('{0} -> {1}'.format(sentence, output))
+
+def textRecognition(service,service_task,image):
+    key = 'vision_' + service_task + '_' + image
+
     if r.get(key) == None:
-        raw_output = service.translations().list(source='en', target=language, q=sentence).execute()
-        output = raw_output['translations'][0]['translatedText']
-        r.set(key, output, ex=60*60*24*15)
-    else:
-        output = r.get(key).decode('utf-8')
-
-    print('translated by Google')
-    print('{0} -> {1}'.format(sentence, output))
-
-'''
-Google Cloud Vision API
-'''
-import base64
-image = "gs://cloud-training-demos/vision/sign2.jpg"
-print(image)
-service = build('vision', 'v1', developerKey=APIKEY)
-request = service.images().annotate(body={
-        'requests': [{
+        request = service.images().annotate(body={
+            'requests': [{
                 'image': {
                     'source': {
                         'gcs_image_uri': image
                     }
                 },
                 'features': [{
-                    'type': 'TEXT_DETECTION',
+                    'type': service_task,
                     'maxResults': 3,
                 }]
             }],
         })
-responses = request.execute(num_retries=3)
-print(responses)
-#
-# foreigntext = responses['responses'][0]['textAnnotations'][0]['description']
-# foreignlang = responses['responses'][0]['textAnnotations'][0]['locale']
-# print(foreignlang, foreigntext)
-#
-# inputs=[foreigntext]
-# outputs = service.translations().list(source=foreignlang, target='en', q=inputs).execute()
-# # print(outputs)
-# for input, output in zip(inputs, outputs['translations']):
-#   print(u"{0} -> {1}".format(input, output['translatedText']))
+        responses = request.execute(num_retries=3)
+        r.set(key, responses, ex=60*60*24*15)
+    else:
+        print('From cache')
+        responses = r.get(key)
+'''
+Google Cloud Translation API
+'''
+service = build('translate', 'v2', developerKey=APIKEY)
+inputs = ['is it really this easy?', 'amazing technology']
+source_language = 'en'
+target_language = 'de'
+
+translate(service,source_language,target_language,inputs)
+'''
+Google Cloud Vision API
+'''
+service = build('vision', 'v1', developerKey=APIKEY)
+image = "gs://cloud-training-demos/vision/sign2.jpg"
+service_task = 'TEXT_DETECTION'
+
+textRecognition(service,service_task,image)
+## Finally translate text found on image
+service = build('translate', 'v2', developerKey=APIKEY)
+inputs = [responses['responses'][0]['textAnnotations'][0]['description']]
+source_language = responses['responses'][0]['textAnnotations'][0]['locale']
+target_language = 'de'
+
+translate(service,source_language,target_language,inputs)
+
 #
 # lservice = build('language', 'v1beta1', developerKey=APIKEY)
 # quotes = [
