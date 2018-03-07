@@ -26,25 +26,28 @@ for sentence in inputs:
     print('translated by Google')
     print('{0} -> {1}'.format(sentence, output))
 
-# # Running Vision API
-# import base64
-# IMAGE="gs://cloud-training-demos/vision/sign2.jpg"
-# vservice = build('vision', 'v1', developerKey=APIKEY)
-# request = vservice.images().annotate(body={
-#         'requests': [{
-#                 'image': {
-#                     'source': {
-#                         'gcs_image_uri': IMAGE
-#                     }
-#                 },
-#                 'features': [{
-#                     'type': 'TEXT_DETECTION',
-#                     'maxResults': 3,
-#                 }]
-#             }],
-#         })
-# responses = request.execute(num_retries=3)
-# print(responses)
+'''
+Google Cloud Vision API
+'''
+import base64
+image = "gs://cloud-training-demos/vision/sign2.jpg"
+print(image)
+service = build('vision', 'v1', developerKey=APIKEY)
+request = service.images().annotate(body={
+        'requests': [{
+                'image': {
+                    'source': {
+                        'gcs_image_uri': image
+                    }
+                },
+                'features': [{
+                    'type': 'TEXT_DETECTION',
+                    'maxResults': 3,
+                }]
+            }],
+        })
+responses = request.execute(num_retries=3)
+print(responses)
 #
 # foreigntext = responses['responses'][0]['textAnnotations'][0]['description']
 # foreignlang = responses['responses'][0]['textAnnotations'][0]['locale']
