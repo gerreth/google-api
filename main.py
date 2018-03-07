@@ -1,6 +1,5 @@
 import os
-print('APIKEY')
-print(os.environ['APIKEY'])
+
 APIKEY=os.environ['APIKEY']
 
 # running Translate API

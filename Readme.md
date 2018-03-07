@@ -4,12 +4,11 @@ Google API Tests
 
 ## Getting Started
 
-Add Text.
+Got to https://console.cloud.google.com/apis/credentials and create an API KEY. Change <YOUR API KEY> in .env-example and rename this file to .env
 
 ### Installing
 
 ```
-docker build -t my-python-app .
-docker run -it --rm --name my-running-app my-python-app
+docker-compose build
+docker-compose up
 ```
-# google-api
