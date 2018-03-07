@@ -3,4 +3,10 @@ services:
   python:
     build: ./
     environment:
-    - APIKEY=${APIKEY}
+      APIKEY: ${APIKEY}
+      REDIS_HOST: "redis"
+      REDIS_DB: "0"
+  redis:
+    image: redis:4.0.2
+    volumes:
+      - ./redis:/data
