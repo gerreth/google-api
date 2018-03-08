@@ -4,9 +4,9 @@ import os
 import redis
 ## Set some global variables
 APIKEY = os.environ['APIKEY']
-'''
+"""
 Helper class
-'''
+"""
 class RedisHelper():
     REDIS_HOST = os.environ['REDIS_HOST']
     REDIS_DB = os.environ['REDIS_DB']
@@ -15,15 +15,23 @@ class RedisHelper():
     def __init__(self):
         self.r = redis.StrictRedis(host=self.REDIS_HOST, port=6379, db=self.REDIS_DB)
     def get(self,key):
-        return json.loads(self.r.get(key))
+        if self.r.get(key) != None:
+            return json.loads(self.r.get(key))
+        return None
     def set(self,key,value):
         self.r.set(key, json.dumps(value), ex = self.expirationTime)
 
 rh = RedisHelper()
-'''
+"""
 Helper functions
-'''
+"""
 def translate(sourceLanguage,targetLanguage,inputs):
+    """
+    Args:
+        sourceLanguage (str): language of input sentence
+        targetLanguage (str): language of output sentence
+        inputs (list of str): List of sentences to translate
+    """
     service = build('translate', 'v2', developerKey=APIKEY)
     for sentence in inputs:
         key = 'translate_' + sourceLanguage + '_' + targetLanguage + '_' + sentence
@@ -36,6 +44,11 @@ def translate(sourceLanguage,targetLanguage,inputs):
         print('{0} -> {1}'.format(sentence, output))
 
 def textRecognition(service_type,image):
+    """
+    Args:
+        service_type (str): 'TEXT_DETECTION', ...
+        audio (str): url of image stored in Google Cloud Storage
+    """
     service = build('vision', 'v1', developerKey=APIKEY)
     key = 'vision_' + service_type + '_' + image
     responses = rh.get(key)
@@ -59,6 +72,11 @@ def textRecognition(service_type,image):
     return responses
 
 def languageProcessing(service_type,quotes):
+    """
+    Args:
+        service_type (str): 'PLAIN_TEXT', ...
+        quotes (list of str): List of sentences to analyze
+    """
     service = build('language', 'v1beta1', developerKey=APIKEY)
     for quote in quotes:
         key = 'language_' + service_type + '_' + quote
@@ -76,3 +94,26 @@ def languageProcessing(service_type,quotes):
         polarity = response['documentSentiment']['polarity']
         magnitude = response['documentSentiment']['magnitude']
         print('POLARITY=%s MAGNITUDE=%s for %s' % (polarity, magnitude, quote))
+
+def speechRecognition(audio):
+    """
+    Args:
+        audio (str): url of .wav audio clip
+    """
+    service = build('speech', 'v1beta1', developerKey=APIKEY)
+    key = 'speech_' + audio
+    response = rh.get(key)
+    if response == None:
+        response = service.speech().syncrecognize(
+            body={
+                'config': {
+                    'encoding': 'LINEAR16',
+                    'sampleRate': 16000
+                },
+                'audio': {
+                    'uri': audio
+                    }
+                }).execute()
+
+    print(response['results'][0]['alternatives'][0]['transcript'])
+    print('Confidence=%f' % response['results'][0]['alternatives'][0]['confidence'])

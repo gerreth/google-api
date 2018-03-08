@@ -1,5 +1,5 @@
-from functions.helper import translate, textRecognition, languageProcessing
-import base64
+import functions.helper as helper
+#import base64
 '''
 Google Cloud Translation API
 '''
@@ -11,20 +11,20 @@ inputs = [
 sourceLanguage = 'en'
 targetLanguage = 'de'
 
-translate(sourceLanguage,targetLanguage,inputs)
+helper.translate(sourceLanguage,targetLanguage,inputs)
 '''
 Google Cloud Vision API
 '''
 image = "gs://cloud-training-demos/vision/sign2.jpg"
 service_type = 'TEXT_DETECTION'
 
-responses = textRecognition(service_type,image)
+responses = helper.textRecognition(service_type,image)
 ## Finally translate text found on image
 inputs = [responses['responses'][0]['textAnnotations'][0]['description']]
 sourceLanguage = responses['responses'][0]['textAnnotations'][0]['locale']
 targetLanguage = 'de'
 
-translate(sourceLanguage,targetLanguage,inputs)
+helper.translate(sourceLanguage,targetLanguage,inputs)
 '''
 Cloud Natural Language API
 '''
@@ -38,20 +38,10 @@ quotes = [
   'When someone you love dies, and you’re not expecting it, you don’t lose her all at once; you lose her in pieces over a long time — the way the mail stops coming, and her scent fades from the pillows and even from the clothes in her closet and drawers. '
 ]
 
-languageProcessing(service_type,quotes)
-#
-# sservice = build('speech', 'v1beta1', developerKey=APIKEY)
-# response = sservice.speech().syncrecognize(
-#     body={
-#         'config': {
-#             'encoding': 'LINEAR16',
-#             'sampleRate': 16000
-#         },
-#         'audio': {
-#             'uri': 'gs://cloud-training-demos/vision/audio.raw'
-#             }
-#         }).execute()
-# print(response)
-#
-# print(response['results'][0]['alternatives'][0]['transcript'])
-# print('Confidence=%f' % response['results'][0]['alternatives'][0]['confidence'])
+helper.languageProcessing(service_type,quotes)
+'''
+Google Cloud Speech API
+'''
+audio = 'gs://cloud-training-demos/vision/audio.raw'
+
+helper.speechRecognition(audio)
