@@ -29,12 +29,31 @@ Cloud Natural Language API
 """
 service_type = 'PLAIN_TEXT'
 quotes = [
-  'To succeed, you must have tremendous perseverance, tremendous will.',
-  'It’s not that I’m so smart, it’s just that I stay with problems longer.',
-  'Love is quivering happiness.',
-  'Love is of all passions the strongest, for it attacks simultaneously the head, the heart, and the senses.',
-  'What difference does it make to the dead, the orphans and the homeless, whether the mad destruction is wrought under the name of totalitarianism or in the holy name of liberty or democracy?',
-  'When someone you love dies, and you’re not expecting it, you don’t lose her all at once; you lose her in pieces over a long time — the way the mail stops coming, and her scent fades from the pillows and even from the clothes in her closet and drawers. '
+  'The FedEx day will be awesome!',
+  'The FedEx day will be great',
+  'The FedEx day will be okay',
+  'The FedEx day was awesome',
+  'The FedEx day was great',
+  'The FedEx day will be okay',
+  'The FedEx day might be okay',
+  'The FedEx day will be bad',
+  'The FedEx day will be very bad',
+  'The FedEx day was bad',
+  'The FedEx day was very bad',
+  'The FedEx day is going to be bad',
+  'The FedEx day will be awful',
+  'The FedEx day was awful',
+  'Der FedEx Tag wird großartig!',
+  'Der FedEx Tag wird super!',
+  'Der FedEx Tag wird gut.',
+  'Der FedEx Tag wird okay.',
+  'Der FedEx Tag wird nicht so toll!',
+  'Der FedEx Tag wird scheisse!',
+  'The FedEx day will be awesome! The FedEx day will be great. The FedEx day will be okay',
+  'The FedEx day will be awesome! The FedEx day will be great. Der FedEx day wird scheisse',
+  'The FedEx day will be awesome! The FedEx day will be not so great. Der FedEx day wird scheisse',
+  'The FedEx day will be good! The FedEx day will be not so great. Der FedEx day wird nicht so toll',
+  'Kaffee frisch',
 ]
 
 helper.languageProcessing(service_type,quotes)
