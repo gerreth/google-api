@@ -1,7 +1,7 @@
 version: '3'
 services:
   python:
-    build: ./
+    build: ./app
     environment:
       APIKEY: ${APIKEY}
       REDIS_HOST: "redis"
