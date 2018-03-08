@@ -14,7 +14,9 @@ Basic
   * docker-compose
   * redis
 
-## Introduction
+## Getting Started
+
+Create a free-trial account on https://cloud.google.com/free/ or use an existing one. **Check current terms and conditions on https://cloud.google.com/free/docs/frequently-asked-questions**
 
 Uses the following APIs
 
@@ -23,11 +25,7 @@ Uses the following APIs
   * [Cloud Natural Language API](https://console.cloud.google.com/apis/library/language.googleapis.com)
   * [Google Cloud Speech API](https://console.cloud.google.com/apis/library/language.googleapis.com)
 
-Activate all of them seperately or give permission to all Google APIs.
-
-## Getting Started
-
-Go to https://console.cloud.google.com/apis/credentials and create an API KEY. Change
+Activate all of them seperately or give permission to all Google APIs. Go to https://console.cloud.google.com/apis/credentials and create an API KEY. Change
 ```
 API=<YOUR API KEY>
 ```
