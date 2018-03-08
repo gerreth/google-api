@@ -8,6 +8,7 @@ services:
       APIKEY: ${APIKEY}
       REDIS_HOST: "redis"
       REDIS_DB: "0"
+      REDIS_ANALYZE: "1"
   redis:
     image: redis:4.0.2
     volumes:
