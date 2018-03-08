@@ -29,16 +29,18 @@ class RedisCache():
 
 class RedisGoogleLimitTracker():
     """
+    Check limits and unitlength
+
     Google Cloud Translation API:   ... To-do ...
     Google Cloud Vision API:        ... To-do ...
-    Cloud Natural Language API:     Check limits and unitlength on https://cloud.google.com/natural-language/pricing
+    Cloud Natural Language API:     https://cloud.google.com/natural-language/pricing
     Google Cloud Speech API:        ... To-do ...
     """
     track = {
         'translate': {},
         'vision': {},
         'language': {
-            'limit': 5000
+            'limit': 5000,
             'unitlength': 1000
         },
         'speech': {}
@@ -51,7 +53,7 @@ class RedisGoogleLimitTracker():
     def __init__(self):
         self.r = redis.StrictRedis(host=REDIS_HOST, port=6379, db=REDIS_ANALYZE)
     def incrby(self,key,value):
-        by = math.ceil(len(value)/self.track[key].unitlength)
+        by = math.ceil(len(value)/self.track[key]['unitlength'])
         if self.r.get(key) == None:
             self.r.set(key, by, ex = self.expirationTime)
         else:

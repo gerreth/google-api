@@ -6,7 +6,7 @@ COPY requirements.txt ./
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN pip3 install --upgrade google-api-python-client
-RUN pip3 install redis
+RUN pip3 install --upgrade redis
 
 COPY . .
 

@@ -15,6 +15,7 @@ helper.translate(sourceLanguage,targetLanguage,inputs)
 Google Cloud Vision API
 """
 image = "gs://cloud-training-demos/vision/sign2.jpg"
+
 service_type = 'TEXT_DETECTION'
 
 responses = helper.textRecognition(service_type,image)
