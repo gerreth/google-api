@@ -37,3 +37,8 @@ in .env-example and rename this file to .env
 docker-compose build
 docker-compose up
 ```
+This simply runs the code in app/main.py and prints out the result once for demonstrational purposes.
+
+## Disclaimer
+
+The code is not meant for production purposes. Caching results from Google API calls *may* violate terms and conditions of their services.

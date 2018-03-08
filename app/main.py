@@ -1,8 +1,7 @@
 import functions.helper as helper
-#import base64
-'''
+"""
 Google Cloud Translation API
-'''
+"""
 inputs = [
     'is it really this easy?',
     'amazing technology',
@@ -12,9 +11,9 @@ sourceLanguage = 'en'
 targetLanguage = 'de'
 
 helper.translate(sourceLanguage,targetLanguage,inputs)
-'''
+"""
 Google Cloud Vision API
-'''
+"""
 image = "gs://cloud-training-demos/vision/sign2.jpg"
 service_type = 'TEXT_DETECTION'
 
@@ -25,9 +24,9 @@ sourceLanguage = responses['responses'][0]['textAnnotations'][0]['locale']
 targetLanguage = 'de'
 
 helper.translate(sourceLanguage,targetLanguage,inputs)
-'''
+"""
 Cloud Natural Language API
-'''
+"""
 service_type = 'PLAIN_TEXT'
 quotes = [
   'To succeed, you must have tremendous perseverance, tremendous will.',
@@ -39,9 +38,9 @@ quotes = [
 ]
 
 helper.languageProcessing(service_type,quotes)
-'''
+"""
 Google Cloud Speech API
-'''
+"""
 audio = 'gs://cloud-training-demos/vision/audio.raw'
 
 helper.speechRecognition(audio)
